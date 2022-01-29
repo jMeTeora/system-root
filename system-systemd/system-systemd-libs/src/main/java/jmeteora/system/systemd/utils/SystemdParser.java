@@ -35,7 +35,7 @@ import jmeteora.system.systemd.data.sections.Section;
 import jmeteora.system.systemd.data.service.Service;
 import jmeteora.system.systemd.data.slice.SLICE;
 import jmeteora.system.systemd.data.socket.SOCKET;
-import jmeteora.system.systemd.data.targetD.target.Target;
+import jmeteora.system.systemd.data.targetd.Target;
 import jmeteora.system.systemd.data.timer.Timer;
 
 @SuppressFBWarnings(value = "EI_EXPOSE_REP")
