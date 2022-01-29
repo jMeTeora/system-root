@@ -10,7 +10,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class ExecutorMaster {
+	private static final Logger LOGGER = LoggerFactory.getLogger("ExecutorMaster");
 	ProcessBuilder processBuilder = new ProcessBuilder();
 	private String parentProg;
 	private ExecutorMasterOutputListener outputListener;
@@ -35,6 +39,28 @@ public class ExecutorMaster {
 		realCmd.addAll(args);
 
 		processBuilder.command(realCmd);
+
+		if (outputListener == null) {
+			LOGGER.warn("outputListener==null");
+			outputListener = new ExecutorMasterOutputListener() {
+
+				@Override
+				public void startedProcess(Long pid) {
+					LOGGER.info("process with pid:[{}] started", pid);
+				}
+
+				@Override
+				public void appendOutput(String line) throws Exception {
+					LOGGER.info("out[{}]", line);
+				}
+
+				@Override
+				public void appendInput(String line) {
+					LOGGER.info("in[{}]", line);
+				}
+			};
+		}
+
 		Process process = processBuilder.start();
 		outputListener.startedProcess(process.pid());
 
