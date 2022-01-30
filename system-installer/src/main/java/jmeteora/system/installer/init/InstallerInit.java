@@ -1,6 +1,7 @@
 package jmeteora.system.installer.init;
 
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import javax.naming.ConfigurationException;
@@ -10,9 +11,12 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tukaani.xz.UnsupportedOptionsException;
 
 import jmeteora.system.apidata.DataSets;
 import jmeteora.system.apidata.Paths;
+import jmeteora.system.apiutils.apps.manager.ProgrammManager;
+import jmeteora.system.apiutils.apps.prog.Programm;
 import jmeteora.system.apiutils.repo.RepoUtils;
 import jmeteora.system.apiutils.repo.git.GitHelper;
 import jmeteora.system.installer.config.InstallerConfig;
@@ -30,6 +34,12 @@ public class InstallerInit {
 			result.append(dic.charAt(index));
 		}
 		return result.toString();
+	}
+
+	private static final ArrayList<Programm> dependencies = new ArrayList<>();
+
+	static {
+		System.out.println("DistributionUtils.enclosing_method():" + Paths.OSRELEASE);
 	}
 
 	public static void main(String[] args) {
@@ -134,9 +144,15 @@ public class InstallerInit {
 
 	private void install() throws Exception {
 		String branch = config.getVersion().toString().toLowerCase();
+		installDependencies();
 		GitHelper.getRepo(Paths.REPOURL, Paths.repoDir, branch);
 		RepoUtils.downloadAndBuild();
 		LOGGER.info("Проверка git репозитория успешно завершена");
+	}
+
+	private void installDependencies() throws UnsupportedOptionsException {
+		ProgrammManager progMan = ProgrammManager.getInstance();
+		progMan.install(dependencies);
 	}
 
 	private void test() {

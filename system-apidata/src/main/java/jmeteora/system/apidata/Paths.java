@@ -20,4 +20,5 @@ public class Paths {
 	private static final String TMP = "/tmp";
 	public static final File TMPDIR = new File(TMP);
 
+	public static final File OSRELEASE = new File(new File("/", "etc"), "os-release");
 }

@@ -9,8 +9,6 @@ import java.security.SecureRandom;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import jmeteora.system.apidata.DataSets;
 import jmeteora.system.installer.init.InstallerInit;
@@ -18,25 +16,22 @@ import lombok.Getter;
 import lombok.Setter;
 
 public class InstallerConfig {
-	private static final Logger LOGGER = LoggerFactory.getLogger("InstallerConfig");
+	private static final SecureRandom secureRandomObj = new SecureRandom();
 
 	private @Getter @Setter String dbHost = "127.0.0.1";
 	private @Getter @Setter int dbPort = 5432;
 
 	private @Getter @Setter String dbName = "jmeteoraSystem";
 	private @Getter @Setter String dbUserName = "jmeteora";
-	private @Getter @Setter String dbUserPassword = InstallerInit.generatePassword(gen(30, 60),
+	private @Getter @Setter String dbUserPassword = InstallerInit.generatePassword(randomIntInRange(30, 60),
 			ALPHA_CAPS + ALPHA + SPECIAL_CHARS);
 
 	private @Getter @Setter DataSets.VERSIONTYPE version = MAIN;
 
 	private @Getter @Setter boolean prepare;
 
-	private int gen(int min, int max) {
-		SecureRandom sr = new SecureRandom();
-		int val = min + sr.nextInt() * ((max - min) + 1);
-		LOGGER.info("from [{}] to [{}] val:[{}]", min, max, val);
-		return val;
+	public static int randomIntInRange(int min, int max) {
+		return secureRandomObj.nextInt((max - min) + 1) + min;
 	}
 
 	@Override
