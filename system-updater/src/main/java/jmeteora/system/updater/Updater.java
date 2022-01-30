@@ -1,0 +1,33 @@
+package jmeteora.system.updater;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import jmeteora.system.apiutils.repo.RepoUtils;
+
+public class Updater extends Thread {
+	private static final Logger LOGGER = LoggerFactory.getLogger("Updater");
+
+	@Override
+	public void run() {
+		int sec = 1000;
+		int minute = 60 * sec;
+		int min1 = 1 * minute;
+		do {
+			try {
+				RepoUtils.fullCase();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			long delay = 0;
+			try {
+				delay = min1;
+				Thread.sleep(delay);
+			} catch (InterruptedException e) {
+				LOGGER.error("sleep err with time:{}", delay, e);
+				Thread.currentThread().interrupt();
+			}
+		} while (true);
+	}
+
+}
