@@ -26,6 +26,7 @@ import jmeteora.system.systemd.data.SystemdElement;
 import jmeteora.system.systemd.data.SystemdElement.CAPs;
 import jmeteora.system.systemd.data.SystemdElement.ELEMENTTYPE;
 import jmeteora.system.systemd.data.SystemdElement.RestrictAddressFamiliesType;
+import jmeteora.system.systemd.data.SystemdElement.RestrictNamespacesType;
 import jmeteora.system.systemd.data.SystemdElement.SECTIONNAME;
 import jmeteora.system.systemd.data.automount.AUTOMOUNT;
 import jmeteora.system.systemd.data.conf.CONF;
@@ -77,8 +78,9 @@ public class SystemdParser {
 				Method getter = checkNullByGetterOptional.get();
 				Object retValue = getter.invoke(section);
 				if (retValue != null) {
-					throw new NotParsedException(String.format(
-							"SystemdParserKeyListener.inputString.NoNull for section:[%s] key:[%s]", section, realKey));
+					throw new NotParsedException(
+							String.format("SystemdParserKeyListener.inputString.NoNull for section:[%s] key:[%s]",
+									section.getClass(), realKey));
 				}
 
 				Optional<Method> setterOptional = getGetOrSetterByKey(systemdElementclaClass.getDeclaredMethods(),
@@ -186,19 +188,24 @@ public class SystemdParser {
 				// ENUMCLASS ENUMCLASSType.valueOf(java.lang.String)
 				Method enumValueOfMethod = enumValueOfMethodOptional.get();
 				// ENUMCLASS.obj
-				Object obj = enumValueOfMethod.invoke(null, value.replace("-", "_".toUpperCase()));
-				if (keyPrivate) {
-					try {
-						keyField.setAccessible(true);
-						keyField.set(section, obj);
-						keyField.setAccessible(false);
-					} catch (Exception e) {
-						keyField.setAccessible(false);
-						throw e;
+				String valueForSet = value.replace("-", "_").toUpperCase();
+				try {
+					Object obj = enumValueOfMethod.invoke(null, valueForSet);
+					if (keyPrivate) {
+						try {
+							keyField.setAccessible(true);
+							keyField.set(section, obj);
+							keyField.setAccessible(false);
+						} catch (Exception e) {
+							keyField.setAccessible(false);
+							throw e;
+						}
+						return true;
 					}
-					return true;
+				} catch (Exception e) {
+					throw new IllegalArgumentException(String.format(
+							"что то с enum[%s] значение:[%s] (для разработчика:[%s])", keyType, value, valueForSet), e);
 				}
-
 			} else {
 				throw new NotParsedException(String.format("Не получен ValueOf для section[%s] key[%s] value[%s]",
 						section.getName(), realKey, value));
@@ -257,6 +264,20 @@ public class SystemdParser {
 						listDataSystemdElement.add(CAPs.valueOf(value));
 						return true;
 					}
+				} else if (type == RestrictNamespacesType.class) {
+					@SuppressWarnings("unchecked")
+					CopyOnWriteArrayList<RestrictNamespacesType> listDataSystemdElement = (CopyOnWriteArrayList<RestrictNamespacesType>) listData;
+
+					String[] valueArr = value.split(" ");
+					if (valueArr.length > 0) {
+						for (String valueArg : valueArr) {
+							listDataSystemdElement.add(RestrictNamespacesType.valueOf(valueArg.toUpperCase()));
+						}
+						return true;
+					} else {
+						listDataSystemdElement.add(RestrictNamespacesType.valueOf(value));
+						return true;
+					}
 				} else if (type == RestrictAddressFamiliesType.class) {
 					@SuppressWarnings("unchecked")
 					CopyOnWriteArrayList<RestrictAddressFamiliesType> listDataSystemdElement = (CopyOnWriteArrayList<RestrictAddressFamiliesType>) listData;
@@ -288,6 +309,14 @@ public class SystemdParser {
 			}
 			throw new NotParsedException(String.format("не установлено значение [%s] для секции [%s] ключа [%s]",
 					keyType.getSimpleName(), section.getClass().getSimpleName(), realKey));
+		} else if (keyType == Integer.class) {
+			if (keyField.trySetAccessible()) {
+				keyField.set(section, Integer.valueOf(value));
+				return true;
+			}
+			throw new NotParsedException(
+					String.format("Integer:не установлено значение [%s] для секции [%s] ключа [%s]",
+							keyType.getSimpleName(), section.getClass().getSimpleName(), realKey));
 		} else if (keyType == SystemdElement.class) {
 			if (keyField.trySetAccessible()) {
 				if (keyField.get(section) != null) {
@@ -413,7 +442,7 @@ public class SystemdParser {
 			return false;
 		}
 		if (value == null) {
-			LOGGER.error("CHECK=checkWithSectionName value==null For sectionName:[{}] with VALUE:[{}] for File:[{}]",
+			LOGGER.warn("CHECK=checkWithSectionName value==null For sectionName:[{}] with VALUE:[{}] for File:[{}]",
 					sectionName, key, file);
 			return false;
 		}

@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 public class SystDKeyMeta {
 
 	public static final String ACCEPT = "Accept";
+	public static final String ACCURACYSEC = "AccuracySec";
 	public static final String ACCURACYSES = "AccuracySec";
 	public static final String AFTER = "After";
 	public static final String ALIAS = "Alias";

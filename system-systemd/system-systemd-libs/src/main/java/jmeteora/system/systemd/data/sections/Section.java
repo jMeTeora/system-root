@@ -27,10 +27,12 @@ public class Section extends SystemdElement {
 			return element.getMountSection();
 		} else if (sectionName.equals(SECTIONNAME.SLISE)) {
 			return element.getOrCreateSliceSection();
+		} else if (sectionName.equals(SECTIONNAME.SLICE)) {
+			return element.getOrCreateSliceSection();
 		}
 
 		else {
-			throw new IllegalArgumentException(String.format("Не получена секция %s для файла [%s] типа %s",
+			throw new IllegalArgumentException(String.format("Не получена секция %s (добавить) для файла [%s] типа %s",
 					sectionName.name(), currentFile, element.getClass().getSimpleName()));
 		}
 	}

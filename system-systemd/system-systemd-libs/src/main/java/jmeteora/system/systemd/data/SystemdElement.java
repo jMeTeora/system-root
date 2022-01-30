@@ -65,7 +65,11 @@ public class SystemdElement {
 	}
 
 	public enum KillSignalType {
-		SIGHUP, SIGTERM, SIGINT, SIGQUIT
+		SIGHUP, SIGTERM, SIGINT, SIGQUIT, SIGUSR2
+	}
+
+	public enum RestrictNamespacesType {
+		CGROUP, IPC, NET, MNT, PID, USER, UTS, TRUE, YES
 	}
 
 	public enum NotifyAccessType {
@@ -80,12 +84,8 @@ public class SystemdElement {
 		INVISIBLE
 	}
 
-	public enum RestartKillSignalType {
-		SIGUSR2
-	}
-
 	public enum RestartType {
-		ALWAYS, NO, ON_ABORT, ON_FAILURE, ON_SUCCESS
+		ALWAYS, ON_FAILURE, NO, ON_ABORT
 	}
 
 	public enum RestrictAddressFamiliesType {
@@ -93,7 +93,7 @@ public class SystemdElement {
 	}
 
 	public enum SECTIONNAME {
-		NOTCONFIGURED, SERVICE, INSTALL, PATH, AUTOMOUNT, UNIT, SOCKET, TIMER, MOUNT, SLISE
+		NOTCONFIGURED, SERVICE, INSTALL, PATH, AUTOMOUNT, UNIT, SOCKET, TIMER, MOUNT, SLISE, SLICE
 	}
 
 	public enum SuccessActionType {
@@ -101,8 +101,8 @@ public class SystemdElement {
 	}
 
 	public enum TypeType {
-		BINFMT_MISC, BTRFS, CONFIGFS, DBUS, DEBUGFS, EXEC, FORKING, FUSECTL, HUGETLBFS, IDLE, MQUEUE, NOTIFY, ONESHOT,
-		SIMPLE, TMPFS, TRACEFS
+		DBUS, FORKING, NOTIFY, ONESHOT, SIMPLE, BTRFS, TMPFS, BINFMT_MISC, CONFIGFS, FUSECTL, DEBUGFS, IDLE, TRACEFS,
+		HUGETLBFS, MQUEUE, EXEC
 	}
 
 	// SECTIONs
@@ -121,42 +121,81 @@ public class SystemdElement {
 	private @Getter @Setter ELEMENTTYPE elementType;
 
 	// field files
+
+	private @Getter @Setter Boolean accept;
 	private @Getter @Setter Boolean allowIsolate;
 	private @Getter @Setter Boolean bindIPv6Only;
+	private @Getter @Setter Boolean casscredentials;
+	private @Getter @Setter Boolean conditionacpower;
+	private @Getter @Setter Boolean conditionfirstboot;
+	private @Getter @Setter Boolean cpuaccounting;
 	private @Getter @Setter Boolean defaultDependencies;
 	private @Getter @Setter Boolean dynamicUser;
 	private @Getter @Setter Boolean ignoreOnIsolate;
+	private @Getter @Setter Boolean ignoresigpipe;
 	private @Getter @Setter Boolean lockPersonality;
+	private @Getter @Setter Boolean makedirectory;
+	private @Getter @Setter Boolean memoryaccounting;
 	private @Getter @Setter Boolean memoryDenyWriteExecute;
 	private @Getter @Setter Boolean nonBlocking;
 	private @Getter @Setter Boolean noNewPrivileges;
-	private @Getter @Setter Boolean privateDevices;
+	private @Getter @Setter Boolean passpacketinfo;
+	private @Getter @Setter Boolean passsecurity;
+	private @Getter @Setter Boolean permissionsstartonly;
+	private @Getter @Setter Boolean persistent;
+	private @Getter @Setter Boolean privatedevices;
+	private @Getter @Setter Boolean privatemounts;
 	private @Getter @Setter Boolean privateNetwork;
 	private @Getter @Setter Boolean privateTmp;
-	private @Getter @Setter Boolean protectControlGroups;
-	private @Getter @Setter Boolean protectHome;
+	private @Getter @Setter Boolean privateusers;
+	private @Getter @Setter Boolean protectclock;
+	private @Getter @Setter Boolean protectcontrolgroups;
 	private @Getter @Setter Boolean protectHostname;
+	private @Getter @Setter Boolean protectkernellogs;
 	private @Getter @Setter Boolean protectKernelModules;
+	private @Getter @Setter Boolean protectkerneltunables;
 	private @Getter @Setter Boolean refuseManualStart;
 	private @Getter @Setter Boolean refuseManualStop;
 	private @Getter @Setter Boolean remainAfterExit;
+	private @Getter @Setter Boolean removeipc;
 	private @Getter @Setter Boolean removeOnStop;
 	private @Getter @Setter Boolean restrictRealtime;
+	private @Getter @Setter Boolean restrictsuidsgid;
+	private @Getter @Setter Boolean runtimedirectorypreserve;
+	private @Getter @Setter Boolean sendsighup;
 	private @Getter @Setter Boolean stopWhenUnneeded;
+	private @Getter @Setter Boolean ttyreset;
+	private @Getter @Setter Boolean ttyVHangup;
+	private @Getter @Setter Boolean ttyVTDisallocate;
+	private @Getter @Setter Boolean writable;
 	private @Getter @Setter ConditionSecurityType conditionSecurity;
 	private @Getter @Setter CopyOnWriteArrayList<CAPs> ambientCapabilities = new CopyOnWriteArrayList<>();
 	private @Getter @Setter CopyOnWriteArrayList<CAPs> capabilityBoundingSet = new CopyOnWriteArrayList<>();
 	private @Getter @Setter CopyOnWriteArrayList<CAPs> conditionCapability = new CopyOnWriteArrayList<>();
 	private @Getter @Setter CopyOnWriteArrayList<RestrictAddressFamiliesType> restrictAddressFamilies = new CopyOnWriteArrayList<>();
+	private @Getter @Setter CopyOnWriteArrayList<RestrictNamespacesType> RestrictNamespaces = new CopyOnWriteArrayList<>();
+	private @Getter @Setter CopyOnWriteArrayList<String> ConditionControlGroupController = new CopyOnWriteArrayList<>();
+
+	private @Getter @Setter CopyOnWriteArrayList<String> ConditionKernelCommandLine = new CopyOnWriteArrayList<>();
+	private @Getter @Setter CopyOnWriteArrayList<String> ListenDatagram = new CopyOnWriteArrayList<>();
+
+	private @Getter @Setter CopyOnWriteArrayList<String> ConditionDirectoryNotEmpty = new CopyOnWriteArrayList<>();
+	private @Getter @Setter CopyOnWriteArrayList<String> ConditionNeedsUpdate = new CopyOnWriteArrayList<>();
+	private @Getter @Setter CopyOnWriteArrayList<String> ConditionPathExistsGlob = new CopyOnWriteArrayList<>();
 	private @Getter @Setter CopyOnWriteArrayList<String> conditionPathExists = new CopyOnWriteArrayList<>();
+	private @Getter @Setter CopyOnWriteArrayList<String> deviceAllow = new CopyOnWriteArrayList<>();
 	private @Getter @Setter CopyOnWriteArrayList<String> documentation = new CopyOnWriteArrayList<>();
 	private @Getter @Setter CopyOnWriteArrayList<String> environmentFile = new CopyOnWriteArrayList<>();
 	private @Getter @Setter CopyOnWriteArrayList<String> environment = new CopyOnWriteArrayList<>();
 	private @Getter @Setter CopyOnWriteArrayList<String> execReload = new CopyOnWriteArrayList<>();
 	private @Getter @Setter CopyOnWriteArrayList<String> execStart = new CopyOnWriteArrayList<>();
 	private @Getter @Setter CopyOnWriteArrayList<String> execStartPre = new CopyOnWriteArrayList<>();
+	private @Getter @Setter CopyOnWriteArrayList<String> ListenFIFO = new CopyOnWriteArrayList<>();
 	private @Getter @Setter CopyOnWriteArrayList<String> listenStream = new CopyOnWriteArrayList<>();
+	private @Getter @Setter CopyOnWriteArrayList<String> loadcredential = new CopyOnWriteArrayList<>();
 	private @Getter @Setter CopyOnWriteArrayList<String> readWriteDirectories = new CopyOnWriteArrayList<>();
+	private @Getter @Setter CopyOnWriteArrayList<String> readwritepaths = new CopyOnWriteArrayList<>();
+	private @Getter @Setter CopyOnWriteArrayList<String> systemcallfilter = new CopyOnWriteArrayList<>();
 	private @Getter @Setter CopyOnWriteArrayList<SystemdElement> after = new CopyOnWriteArrayList<>();
 	private @Getter @Setter CopyOnWriteArrayList<SystemdElement> also = new CopyOnWriteArrayList<>();
 	private @Getter @Setter CopyOnWriteArrayList<SystemdElement> before = new CopyOnWriteArrayList<>();
@@ -164,60 +203,115 @@ public class SystemdElement {
 	private @Getter @Setter CopyOnWriteArrayList<SystemdElement> requiredBy = new CopyOnWriteArrayList<>();
 	private @Getter @Setter CopyOnWriteArrayList<SystemdElement> requires = new CopyOnWriteArrayList<>();
 	private @Getter @Setter CopyOnWriteArrayList<SystemdElement> service = new CopyOnWriteArrayList<>();
+	private @Getter @Setter CopyOnWriteArrayList<SystemdElement> Sockets = new CopyOnWriteArrayList<>();
 	private @Getter @Setter CopyOnWriteArrayList<SystemdElement> wantedBy = new CopyOnWriteArrayList<>();
 	private @Getter @Setter CopyOnWriteArrayList<SystemdElement> wants = new CopyOnWriteArrayList<>();
 	private @Getter @Setter DevicePolicyType devicePolicy;
+	private @Getter @Setter Integer FileDescriptorStoreMax;
+	private @Getter @Setter Integer IOSchedulingPriority;
+	private @Getter @Setter Integer MaxConnections;
+	private @Getter @Setter Integer Nice;
+	private @Getter @Setter Integer RestartForceExitStatus;
+	private @Getter @Setter Integer RestartSec;
+	private @Getter @Setter Integer RuntimeDirectoryMode;
+	private @Getter @Setter Integer StartLimitBurst;
+	private @Getter @Setter Integer StartLimitIntervalSec;
+	private @Getter @Setter IOSchedulingClassType iOschedulingclass;
+	private @Getter @Setter KeyringModeType keyringMode;
 	private @Getter @Setter KillModeType killMode;
 	private @Getter @Setter KillSignalType killSignal;
+	private @Getter @Setter KillSignalType RestartKillSignal;
 	private @Getter @Setter NotifyAccessType notifyAccess;
+	private @Getter @Setter ProtectProcType protectproc;
 	private @Getter @Setter RestartType restart;
+	private @Getter @Setter String accuracysec;
 	private @Getter @Setter String assertPathExists;
 	private @Getter @Setter String busName;
-	private @Getter @Setter String conditionControlGroupController;
 	private @Getter @Setter String conditionDirectoryNotEmpty;
+	private @Getter @Setter String ConditionFileIsExecutable;
+	private @Getter @Setter String ConditionFileNotEmpty;
 	private @Getter @Setter String conditionNeedsUpdate;
+	private @Getter @Setter String ConditionPathIsMountPoint;
 	private @Getter @Setter String conditionPathIsReadWrite;
 	private @Getter @Setter String conditionPathIsSymbolicLink;
 	private @Getter @Setter String conditionVirtualization;
+	private @Getter @Setter String CPUSchedulingPolicy;
+	private @Getter @Setter String DefaultInstance;
 	private @Getter @Setter String delegate;
 	private @Getter @Setter String description;
-	private @Getter @Setter String deviceAllow;
+	private @Getter @Setter String DirectoryNotEmpty;
+	private @Getter @Setter String ExecStartPost;
 	private @Getter @Setter String execStop;
 	private @Getter @Setter String execStopPost;
+	private @Getter @Setter String memorymin;
+	private @Getter @Setter String socketuser;
+
+	private @Getter @Setter String memorylow;
+	private @Getter @Setter String socketgroup;
+	private @Getter @Setter String group;
+	private @Getter @Setter String iPAddressDeny;
+	private @Getter @Setter String JobTimeoutAction;// poweroff-force reboot-force
+	private @Getter @Setter String JobTimeoutSec;
 	private @Getter @Setter String limitCORE;
 	private @Getter @Setter String limitMEMLOCK;
 	private @Getter @Setter String limitNOFILE;
-	private @Getter @Setter String listenDatagram;
+	private @Getter @Setter String listennetlink;
+	private @Getter @Setter String listensequentialpacket;
+	private @Getter @Setter String listenspecial;
+	private @Getter @Setter String LogsDirectory;
+	private @Getter @Setter String LogsDirectoryMode;
 	private @Getter @Setter String onBootSec;
+	private @Getter @Setter String oncalendar;
+	private @Getter @Setter String OnFailureJobMode;
+	private @Getter @Setter String onunitactivesec;
 	private @Getter @Setter String oOMScoreAdjust;
 	private @Getter @Setter String options;
 	private @Getter @Setter String pAMName;
+	private @Getter @Setter String PathExists;
 	private @Getter @Setter String pIDFile;
+	private @Getter @Setter String ProcSubset;
+	private @Getter @Setter String protectHome;
 	private @Getter @Setter String protectSystem;
+	private @Getter @Setter String RandomizedDelaySec;
 	private @Getter @Setter String readOnlyDirectories;
+	private @Getter @Setter String receiveBuffer;
+	private @Getter @Setter Boolean PassCredentials;
+	private @Getter @Setter String requiresMountsFor;
+	private @Getter @Setter String RestartPreventExitStatus;
 	private @Getter @Setter String runtimeDirectory;
+	private @Getter @Setter String RuntimeMaxSec;
+	private @Getter @Setter String SendBuffer;
 	private @Getter @Setter String slice;
 	private @Getter @Setter String socketMode;
+	private @Getter @Setter String StandardError;
+	private @Getter @Setter String standardinput;
 	private @Getter @Setter String standardOutput;
 	private @Getter @Setter String stateDirectory;
+	private @Getter @Setter String SuccessExitStatus;
+	private @Getter @Setter String SupplementaryGroups;
+	private @Getter @Setter String Symlinks;
+	private @Getter @Setter String SyslogIdentifier;
+	private @Getter @Setter String systemcallarchitectures;// native
+	private @Getter @Setter String systemcallerrornumber;// EPERM
 	private @Getter @Setter String tasksMax;
 	private @Getter @Setter String timeoutSec;
 	private @Getter @Setter String timeoutStartSec;
 	private @Getter @Setter String timeoutStopSec;
+	private @Getter @Setter String Timestamping;
+	private @Getter @Setter String ttyPath;
+	private @Getter @Setter String UMask;
+	private @Getter @Setter String UnsetEnvironment;
 	private @Getter @Setter String user;
 	private @Getter @Setter String utmpIdentifier;
 	private @Getter @Setter String watchdogSec;
 	private @Getter @Setter String what;
 	private @Getter @Setter String where;
-
-	private @Getter @Setter String requiresMountsFor;
-	private @Getter @Setter String iPAddressDeny;
-	private @Getter @Setter KeyringModeType keyringMode;
-	private @Getter @Setter String receiveBuffer;
-	private @Getter @Setter SuccessActionType successAction;
-
 	private @Getter @Setter String workingDirectory;
+	private @Getter @Setter SuccessActionType successAction;
+	private @Getter @Setter SystemdElement alias;
 	private @Getter @Setter SystemdElement bindsTo;
+	private @Getter @Setter SystemdElement OnFailure;
+	private @Getter @Setter SystemdElement partof;
 	private @Getter @Setter TypeType type;
 
 	// field files

@@ -1,6 +1,8 @@
 package jmeteora.system.systemd.demo;
 
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.slf4j.Logger;
@@ -11,6 +13,8 @@ import jmeteora.system.systemd.data.SystemdElement;
 import jmeteora.system.systemd.utils.ServiceUtils;
 
 public class DemoServiceParse {
+	private static File logFile = new File("demo_debug_log.txt");
+
 	interface DemoServiceParseListener {
 		void appendDir(File dir) throws Exception;
 
@@ -43,7 +47,13 @@ public class DemoServiceParse {
 						try {
 							listener.appendFile(file);
 						} catch (Exception e) {
+							// System.err.println(JVMUtils.getFullStackTraceAsString(true, 0, e) + '\n');
 							e.printStackTrace();
+							if (!logFile.exists()) {
+								logFile.createNewFile();
+							}
+							Files.writeString(logFile.toPath(), (e.getCause().toString() + "   " + e.toString() + '\n'),
+									StandardOpenOption.APPEND);
 						}
 					} else {
 						listener.appendFile(file);
