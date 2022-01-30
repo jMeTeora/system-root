@@ -1,10 +1,8 @@
 package jmeteora.system.apiutils.apps.prog;
 
-public class Programm implements ProgrammInterface {
+import lombok.Getter;
 
-	@Override
-	public boolean install() {
-		return false;
-	}
+public abstract class Programm implements ProgrammInterface {
+	private @Getter String installNameString;
 
 }

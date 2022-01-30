@@ -1,5 +1,6 @@
 package jmeteora.system.installer.init;
 
+import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,12 +12,15 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.tukaani.xz.UnsupportedOptionsException;
 
 import jmeteora.system.apidata.DataSets;
 import jmeteora.system.apidata.Paths;
 import jmeteora.system.apiutils.apps.manager.ProgrammManager;
 import jmeteora.system.apiutils.apps.prog.Programm;
+import jmeteora.system.apiutils.apps.prog.impl.Netstat;
+import jmeteora.system.apiutils.apps.prog.impl.PAM;
+import jmeteora.system.apiutils.apps.prog.impl.Postgresql;
+import jmeteora.system.apiutils.apps.prog.impl.SS;
 import jmeteora.system.apiutils.repo.RepoUtils;
 import jmeteora.system.apiutils.repo.git.GitHelper;
 import jmeteora.system.installer.config.InstallerConfig;
@@ -39,13 +43,22 @@ public class InstallerInit {
 	private static final ArrayList<Programm> dependencies = new ArrayList<>();
 
 	static {
-		System.out.println("DistributionUtils.enclosing_method():" + Paths.OSRELEASE);
+		try {
+			dependencies.add(new Postgresql());
+			dependencies.add(new Netstat());
+			dependencies.add(new SS());
+			dependencies.add(new PAM());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public static void main(String[] args) {
 		try {
 			InstallerInit init = new InstallerInit();
 			readVars(init, args);
+
+			init.installDependencies();
 
 			init.init();
 			init.install();
@@ -150,7 +163,7 @@ public class InstallerInit {
 		LOGGER.info("Проверка git репозитория успешно завершена");
 	}
 
-	private void installDependencies() throws UnsupportedOptionsException {
+	private void installDependencies() throws Exception {
 		ProgrammManager progMan = ProgrammManager.getInstance();
 		progMan.install(dependencies);
 	}
