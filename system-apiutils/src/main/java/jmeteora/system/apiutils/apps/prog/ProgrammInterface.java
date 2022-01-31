@@ -7,4 +7,5 @@ public interface ProgrammInterface {
 
 	boolean update() throws Exception;
 
+	String getInstallNameString() throws Exception;
 }

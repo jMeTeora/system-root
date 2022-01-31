@@ -1,6 +1,5 @@
 package jmeteora.system.installer.init;
 
-import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,11 +15,12 @@ import org.slf4j.LoggerFactory;
 import jmeteora.system.apidata.DataSets;
 import jmeteora.system.apidata.Paths;
 import jmeteora.system.apiutils.apps.manager.ProgrammManager;
+import jmeteora.system.apiutils.apps.manager.ProgrammManagerResolver;
 import jmeteora.system.apiutils.apps.prog.Programm;
+import jmeteora.system.apiutils.apps.prog.impl.Iproute2;
 import jmeteora.system.apiutils.apps.prog.impl.Netstat;
 import jmeteora.system.apiutils.apps.prog.impl.PAM;
 import jmeteora.system.apiutils.apps.prog.impl.Postgresql;
-import jmeteora.system.apiutils.apps.prog.impl.SS;
 import jmeteora.system.apiutils.repo.RepoUtils;
 import jmeteora.system.apiutils.repo.git.GitHelper;
 import jmeteora.system.installer.config.InstallerConfig;
@@ -43,22 +43,16 @@ public class InstallerInit {
 	private static final ArrayList<Programm> dependencies = new ArrayList<>();
 
 	static {
-		try {
-			dependencies.add(new Postgresql());
-			dependencies.add(new Netstat());
-			dependencies.add(new SS());
-			dependencies.add(new PAM());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		dependencies.add(new Postgresql());
+		dependencies.add(new Netstat());
+		dependencies.add(new Iproute2());
+		dependencies.add(new PAM());
 	}
 
 	public static void main(String[] args) {
 		try {
 			InstallerInit init = new InstallerInit();
 			readVars(init, args);
-
-			init.installDependencies();
 
 			init.init();
 			init.install();
@@ -164,7 +158,7 @@ public class InstallerInit {
 	}
 
 	private void installDependencies() throws Exception {
-		ProgrammManager progMan = ProgrammManager.getInstance();
+		ProgrammManager progMan = ProgrammManagerResolver.resolve();
 		progMan.install(dependencies);
 	}
 
