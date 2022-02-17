@@ -107,6 +107,9 @@ public class InstallerInit {
 			if (arg.equalsIgnoreCase("--debug")) {
 				init.debug = true;
 			}
+			if (arg.equalsIgnoreCase("--all")) {
+				init.config.setAllBranches(true);
+			}
 		}
 		LOGGER.info("\n{}", init.config);
 		if (!init.config.isPrepare()) {
@@ -151,8 +154,9 @@ public class InstallerInit {
 
 	private void install() throws Exception {
 		String branch = config.getVersion().toString().toLowerCase();
+
 		installDependencies();
-		GitHelper.getRepo(Paths.REPOURL, Paths.repoDir, branch);
+		GitHelper.getRepo(Paths.REPOURL, Paths.repoDir, branch, config.isAllBranches());
 		RepoUtils.downloadAndBuild();
 		LOGGER.info("Проверка git репозитория успешно завершена");
 	}

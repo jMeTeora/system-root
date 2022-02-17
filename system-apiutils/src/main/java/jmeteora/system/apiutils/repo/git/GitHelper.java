@@ -18,14 +18,15 @@ import jmeteora.system.apidata.Paths;
 public class GitHelper {
 	private static final Logger LOGGER = LoggerFactory.getLogger("GitHelper");
 
-	public static boolean getRepo(String repoUrl, File repoDir, String branch) throws GitAPIException, IOException {
+	public static boolean getRepo(String repoUrl, File repoDir, String branch, boolean allBranches)
+			throws GitAPIException, IOException {
 		if (repoDir.exists()) {
 			try (Git git = Git.open(repoDir);) {
 				git.pull().call();
 			}
 		} else {
-			Git.cloneRepository().setURI(repoUrl).setDirectory(repoDir).setBranch(branch).setCloneAllBranches(true)
-					.call();
+			Git.cloneRepository().setURI(repoUrl).setDirectory(repoDir).setBranch(branch)
+					.setCloneAllBranches(allBranches).call();
 		}
 		return true;
 	}

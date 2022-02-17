@@ -21,4 +21,6 @@ public class Paths {
 	public static final File TMPDIR = new File(TMP);
 
 	public static final File OSRELEASE = new File(new File("/", "etc"), "os-release");
+	public static final String DEV_SHM_JMETEORA_SYSTEM_SELINUX_SERVER = "/dev/shm/jmeteora/system/selinux/server";
+
 }

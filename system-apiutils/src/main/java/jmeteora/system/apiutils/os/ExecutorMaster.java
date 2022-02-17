@@ -14,6 +14,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ExecutorMaster {
+	public static void main(String[] args) throws Exception {
+		ExecutorMaster executorMaster = new ExecutorMaster();
+		executorMaster.parrentCommand("bash");
+		executorMaster.command("sleep 300");
+		executorMaster.call();
+	}
+
 	private static final Logger LOGGER = LoggerFactory.getLogger("ExecutorMaster");
 	ProcessBuilder processBuilder = new ProcessBuilder();
 	private String parentProg;
@@ -96,6 +103,7 @@ public class ExecutorMaster {
 			commandAppender.start();
 			String line;
 			while ((line = reader.readLine()) != null) {
+				System.out.println("ExecutorMaster.call():" + line);
 				if (outputListener != null) {
 					outputListener.appendOutput(line);
 				}

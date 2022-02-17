@@ -28,6 +28,7 @@ public class InstallerConfig {
 
 	private @Getter @Setter DataSets.VERSIONTYPE version = MAIN;
 
+	private @Getter @Setter boolean allBranches;
 	private @Getter @Setter boolean prepare;
 
 	public static int randomIntInRange(int min, int max) {
